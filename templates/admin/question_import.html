@@ -1,0 +1,6 @@
+{% extends "admin/base_admin.html" %}
+{% set active_page = "questions" %}
+{% block title %}Import Practice Questions{% endblock %}
+{% block admin_content %}
+<div class="card shadow-sm"><div class="card-body"><h1 class="h3 mb-3">Import Practice Questions</h1><p class="text-muted">Upload a CSV with columns: <code>category, question, option_a, option_b, option_c, option_d, correct_option</code>.</p><form method="post" enctype="multipart/form-data"><div class="mb-3"><label class="form-label" for="csv_file">CSV file</label><input class="form-control" id="csv_file" name="csv_file" type="file" accept=".csv,text/csv" required></div><button class="btn btn-primary" type="submit">Import Questions</button><a class="btn btn-outline-secondary" href="{{ url_for('admin.questions') }}">Cancel</a></form></div></div>
+{% endblock %}

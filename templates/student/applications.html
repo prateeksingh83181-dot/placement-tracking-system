@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}My Applications{% endblock %}
+{% block content %}
+<h1 class="h3 mb-4">My Applications</h1>
+{% for application in applications %}
+<div class="card shadow-sm mb-3">
+  <div class="card-body">
+    <div class="d-flex justify-content-between flex-wrap gap-2 mb-3">
+      <div><h2 class="h5 mb-1">{{ application.company.name }}</h2><span class="text-muted">{{ application.company.role_title }}</span></div>
+      <div class="text-muted small text-end"><div>Applied: {{ application.applied_on.strftime('%d %b %Y, %H:%M') }}</div><div>Updated: {{ application.updated_on.strftime('%d %b %Y, %H:%M') }}</div></div>
+    </div>
+    {% if application.status == 'Rejected' %}
+      <div class="alert alert-danger mb-0 py-2"><strong>Rejected</strong></div>
+    {% else %}
+      <div class="d-flex align-items-center flex-wrap gap-2">
+        {% for stage in ['Applied','Shortlisted','Interview','Selected'] %}
+          {% set completed = (application.status == 'Shortlisted' and stage == 'Applied') or (application.status == 'Interview' and stage in ['Applied','Shortlisted']) or (application.status == 'Selected' and stage in ['Applied','Shortlisted','Interview']) %}
+          {% set current = application.status == stage %}
+          <span class="badge rounded-pill {% if completed %}text-bg-success{% elif current %}text-bg-primary{% else %}text-bg-light text-dark border{% endif %} px-3 py-2">{{ stage }}</span>
+          {% if stage != 'Selected' %}<span class="text-muted">→</span>{% endif %}
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% else %}
+<div class="alert alert-info">You have not applied to any companies yet.</div>
+{% endfor %}
+{% endblock %}

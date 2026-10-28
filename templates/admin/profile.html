@@ -1,0 +1,17 @@
+{% extends "admin/base_admin.html" %}
+{% set active_page = 'profile' %}
+{% block title %}Admin Profile{% endblock %}
+{% block admin_content %}
+<h2 class="mb-3">Admin Profile</h2>
+<div class="card shadow-sm"><div class="card-body">
+<form method="post" novalidate>
+  <div class="mb-3"><label class="form-label" for="name">Name</label><input class="form-control" id="name" name="name" value="{{ admin.name }}" minlength="2" maxlength="120" required></div>
+  <div class="mb-3"><label class="form-label" for="email">Email</label><input class="form-control" id="email" name="email" type="email" value="{{ admin.email }}" maxlength="255" required></div>
+  <hr><h5>Change Password <small class="text-muted">(optional)</small></h5>
+  <div class="mb-3"><label class="form-label" for="current_password">Current password</label><input class="form-control" id="current_password" name="current_password" type="password"></div>
+  <div class="mb-3"><label class="form-label" for="new_password">New password</label><input class="form-control" id="new_password" name="new_password" type="password" minlength="8"></div>
+  <div class="mb-3"><label class="form-label" for="confirm_password">Confirm new password</label><input class="form-control" id="confirm_password" name="confirm_password" type="password" minlength="8"></div>
+  <button class="btn btn-primary" type="submit">Save Profile</button>
+</form>
+</div></div>
+{% endblock %}

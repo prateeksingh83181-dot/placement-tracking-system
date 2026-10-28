@@ -1,0 +1,28 @@
+{% extends "admin/base_admin.html" %}
+{% import "admin/_badges.html" as badges %}
+{% set active_page = "students" %}
+{% block title %}Student Details{% endblock %}
+{% block admin_content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+  <div><h1 class="h3 mb-1">{{ student.user.name }}</h1><p class="text-muted mb-0">{{ student.roll_no }} · {{ student.branch }}</p></div>
+  <a class="btn btn-outline-secondary" href="{{ url_for('admin.students') }}">Back to Students</a>
+</div>
+<div class="row g-3">
+  <div class="col-lg-4">
+    <div class="card shadow-sm mb-3"><div class="card-header fw-bold">Profile</div><div class="card-body">
+      <dl class="row mb-0"><dt class="col-5">Name</dt><dd class="col-7">{{ student.user.name }}</dd><dt class="col-5">Email</dt><dd class="col-7 text-break">{{ student.user.email }}</dd><dt class="col-5">Roll No</dt><dd class="col-7">{{ student.roll_no }}</dd><dt class="col-5">Branch</dt><dd class="col-7">{{ student.branch }}</dd><dt class="col-5">CGPA</dt><dd class="col-7">{{ student.cgpa }}</dd><dt class="col-5">Backlogs</dt><dd class="col-7">{{ student.active_backlogs }}</dd><dt class="col-5">Resume</dt><dd class="col-7">{% if student.resume_filename %}<a href="{{ url_for('admin.download_student_resume', student_id=student.id, filename=student.resume_filename) }}">Download PDF</a>{% else %}<span class="text-muted">Not uploaded</span>{% endif %}</dd></dl>
+    </div></div>
+    <div class="card shadow-sm"><div class="card-header fw-bold">Edit Academics</div><div class="card-body"><form method="post"><div class="mb-3"><label class="form-label" for="cgpa">CGPA</label><input class="form-control" id="cgpa" name="cgpa" type="number" min="0" max="10" step="0.01" value="{{ student.cgpa }}" required></div><div class="mb-3"><label class="form-label" for="active_backlogs">Active Backlogs</label><input class="form-control" id="active_backlogs" name="active_backlogs" type="number" min="0" step="1" value="{{ student.active_backlogs }}" required></div><button class="btn btn-primary" type="submit">Save Changes</button></form><hr><form method="post" action="{{ url_for('admin.delete_student', student_id=student.id) }}" onsubmit="return confirm('Delete {{ student.user.name|e }} and all applications, attempts, and account data?');"><button class="btn btn-outline-danger" type="submit">Delete Student</button></form></div></div>
+  </div>
+  <div class="col-lg-8">
+    <div class="card shadow-sm mb-3"><div class="card-header fw-bold">Applications</div><div class="card-body">
+      {% for application in applications %}
+      <div class="border rounded p-3 mb-3"><div class="d-flex justify-content-between"><strong>{{ application.company.name }}</strong>{{ badges.application_status(application.status) }}</div><div class="d-flex flex-wrap align-items-center gap-2 mt-3">
+        {% if application.status == 'Rejected' %}<span class="badge text-bg-danger p-2">Rejected</span>{% else %}{% set stage_index = {'Applied':0,'Shortlisted':1,'Interview':2,'Selected':3}[application.status] %}{% for stage in ['Applied','Shortlisted','Interview','Selected'] %}{% set idx = loop.index0 %}<span class="badge p-2 {% if idx < stage_index %}text-bg-success{% elif idx == stage_index %}text-bg-primary{% else %}text-bg-light text-dark border{% endif %}">{{ stage }}</span>{% if not loop.last %}<span class="text-muted">→</span>{% endif %}{% endfor %}{% endif %}
+      </div><small class="text-muted d-block mt-2">Applied {{ application.applied_on.strftime('%d %b %Y, %H:%M') }} · Updated {{ application.updated_on.strftime('%d %b %Y, %H:%M') }}</small></div>
+      {% else %}<p class="text-muted mb-0">No applications yet.</p>{% endfor %}
+    </div></div>
+    <div class="card shadow-sm"><div class="card-header fw-bold">Practice Attempts</div><div class="table-responsive"><table class="table align-middle mb-0"><thead><tr><th>Category</th><th>Score</th><th>Taken On</th></tr></thead><tbody>{% for attempt in attempts %}<tr><td>{{ attempt.category or 'General' }}</td><td>{{ attempt.score }} / {{ attempt.total }}</td><td>{{ attempt.taken_on.strftime('%d %b %Y, %H:%M') }}</td></tr>{% else %}<tr><td colspan="3" class="text-muted p-3">No practice attempts yet.</td></tr>{% endfor %}</tbody></table></div></div>
+  </div>
+</div>
+{% endblock %}

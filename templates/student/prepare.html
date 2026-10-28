@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Preparation{% endblock %}
+{% block content %}
+<h1 class="h3 mb-4">Preparation</h1>
+<div class="card shadow-sm mb-4"><div class="card-body"><form method="get" action="{{ url_for('student.prepare_test') }}" class="row g-3 align-items-end"><div class="col-md-5"><label for="category" class="form-label">Practice category</label><select class="form-select" id="category" name="category" required><option value="">Choose category</option>{% for category in test_categories %}<option value="{{ category }}">{{ category }}</option>{% endfor %}</select></div><div class="col-md-3"><button class="btn btn-primary" type="submit">Start practice test</button></div></form></div></div>
+{% for category in categories %}
+<div class="card shadow-sm mb-3"><div class="card-header fw-bold">{{ category }}</div><div class="list-group list-group-flush">{% for resource in resources_by_category[category] %}<div class="list-group-item"><strong>{{ resource.title }}</strong><div>{% if resource.link_or_text.startswith('http://') or resource.link_or_text.startswith('https://') %}<a href="{{ resource.link_or_text }}" target="_blank" rel="noopener noreferrer">{{ resource.link_or_text }}</a>{% else %}{{ resource.link_or_text }}{% endif %}</div></div>{% else %}<div class="list-group-item text-muted">No resources added yet.</div>{% endfor %}</div></div>
+{% endfor %}
+<h2 class="h4 mt-4">Past Attempts</h2><div class="table-responsive"><table class="table table-striped"><thead><tr><th>Category</th><th>Score</th><th>Date</th></tr></thead><tbody>{% for attempt in attempts %}<tr><td>{{ attempt.category or 'Mixed' }}</td><td>{{ attempt.score }}/{{ attempt.total }}</td><td>{{ attempt.taken_on.strftime('%d %b %Y, %H:%M') }}</td></tr>{% else %}<tr><td colspan="3" class="text-muted">No attempts yet.</td></tr>{% endfor %}</tbody></table></div>
+{% endblock %}

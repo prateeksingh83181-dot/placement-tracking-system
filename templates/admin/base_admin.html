@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="admin-layout row g-0">
+  <aside class="admin-sidebar col-lg-2 col-md-3 mb-3 mb-md-0">
+    <nav class="list-group shadow-sm">
+      <a class="list-group-item list-group-item-action {% if active_page == 'dashboard' %}active{% endif %}" href="{{ url_for('admin.dashboard') }}">Dashboard</a>
+      <a class="list-group-item list-group-item-action {% if active_page == 'students' %}active{% endif %}" href="{{ url_for('admin.students') }}">Students</a>
+      <a class="list-group-item list-group-item-action {% if active_page == 'companies' %}active{% endif %}" href="{{ url_for('admin.companies') }}">Companies &amp; Drives</a>
+      <a class="list-group-item list-group-item-action {% if active_page == 'applications' %}active{% endif %}" href="{{ url_for('admin.applications') }}">Applications</a>
+      <div class="list-group-item fw-bold small text-uppercase text-muted">Preparation</div>
+      <a class="list-group-item list-group-item-action ps-4 {% if active_page == 'resources' %}active{% endif %}" href="{{ url_for('admin.resources') }}">Resources</a>
+      <a class="list-group-item list-group-item-action ps-4 {% if active_page == 'questions' %}active{% endif %}" href="{{ url_for('admin.questions') }}">Questions</a>
+      <a class="list-group-item list-group-item-action {% if active_page == 'attempts' %}active{% endif %}" href="{{ url_for('admin.attempts') }}">Practice Attempts</a>
+      <a class="list-group-item list-group-item-action {% if active_page == 'reports' %}active{% endif %}" href="{{ url_for('admin.reports') }}">Reports</a>
+      <div class="list-group-item fw-bold small text-uppercase text-muted">Administration</div>
+      <a class="list-group-item list-group-item-action ps-4 {% if active_page == 'profile' %}active{% endif %}" href="{{ url_for('admin.profile') }}">Profile</a>
+      <a class="list-group-item list-group-item-action ps-4 {% if active_page == 'admins' %}active{% endif %}" href="{{ url_for('admin.admins') }}">Administrators</a>
+      <a class="list-group-item list-group-item-action ps-4 {% if active_page == 'activity' %}active{% endif %}" href="{{ url_for('admin.activity') }}">Activity Log</a>
+    </nav>
+  </aside>
+  <section class="admin-main col-lg-10 col-md-9 ps-md-4">
+    {% block admin_content %}{% endblock %}
+  </section>
+</div>
+{% endblock %}

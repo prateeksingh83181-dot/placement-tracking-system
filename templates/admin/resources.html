@@ -1,0 +1,9 @@
+{% extends "admin/base_admin.html" %}
+{% set active_page = "resources" %}
+{% block title %}Manage Resources{% endblock %}
+{% block admin_content %}
+<div class="d-flex justify-content-between align-items-center mb-3"><h1 class="h3 mb-0">Preparation Resources</h1><a class="btn btn-primary" href="{{ url_for('admin.new_resource') }}">Add Resource</a></div>
+<div class="table-responsive card shadow-sm"><table class="table table-striped align-middle mb-0"><thead><tr><th>Title</th><th>Category</th><th>Link or Text</th><th>Added On</th><th>Actions</th></tr></thead><tbody>
+{% for resource in resources %}<tr><td>{{ resource.title }}</td><td>{{ resource.category }}</td><td class="text-break">{% if resource.link_or_text.startswith('http://') or resource.link_or_text.startswith('https://') %}<a href="{{ resource.link_or_text }}" target="_blank" rel="noopener">{{ resource.link_or_text }}</a>{% else %}{{ resource.link_or_text }}{% endif %}</td><td>{% if resource.added_on %}{{ resource.added_on.strftime('%d %b %Y, %H:%M') }}{% else %}—{% endif %}</td><td><div class="d-flex gap-2"><a class="btn btn-sm btn-outline-primary" href="{{ url_for('admin.edit_resource', resource_id=resource.id) }}">Edit</a><form method="post" action="{{ url_for('admin.delete_resource', resource_id=resource.id) }}" onsubmit="return confirm('Delete this resource?');"><button class="btn btn-sm btn-outline-danger">Delete</button></form></div></td></tr>
+{% else %}<tr><td colspan="5" class="text-center text-muted py-4">No resources found.</td></tr>{% endfor %}</tbody></table></div>
+{% endblock %}

@@ -1,0 +1,9 @@
+{% extends "admin/base_admin.html" %}
+{% set active_page = 'activity' %}
+{% block title %}Activity Log{% endblock %}
+{% block admin_content %}
+<h2 class="mb-3">Audit Activity</h2>
+<div class="card shadow-sm"><div class="table-responsive"><table class="table table-striped mb-0"><thead><tr><th>Time</th><th>Admin</th><th>Action</th><th>Target</th></tr></thead><tbody>
+{% for entry in entries %}<tr><td>{{ entry.timestamp.strftime('%d %b %Y, %H:%M:%S') }}</td><td>{{ entry.admin.name if entry.admin else 'Deleted admin' }}</td><td><span class="badge text-bg-primary text-capitalize">{{ entry.action }}</span></td><td>{{ entry.target }}</td></tr>{% else %}<tr><td colspan="4"><div class="alert alert-info mb-0">No administrative activity yet.</div></td></tr>{% endfor %}
+</tbody></table></div></div>
+{% endblock %}

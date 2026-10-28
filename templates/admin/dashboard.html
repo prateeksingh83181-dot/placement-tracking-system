@@ -1,0 +1,58 @@
+{% extends "admin/base_admin.html" %}
+{% import "admin/_badges.html" as badges %}
+{% set active_page = "dashboard" %}
+{% block title %}TPO Dashboard{% endblock %}
+{% block admin_content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div><h1 class="h3 mb-1">TPO Admin Dashboard</h1><p class="text-muted mb-0">Welcome, {{ current_user.name }}</p></div>
+  <a class="btn btn-success" href="{{ url_for('admin.export_placement_report') }}">Export CSV</a>
+</div>
+
+<div class="row g-3 mb-4">
+  <div class="col-sm-6 col-xl-2"><div class="card shadow-sm h-100"><div class="card-body"><div class="text-muted small">Total Students</div><div class="fs-3 fw-bold">{{ total_students }}</div></div></div></div>
+  <div class="col-sm-6 col-xl-2"><div class="card shadow-sm h-100"><div class="card-body"><div class="text-muted small">Total Companies</div><div class="fs-3 fw-bold">{{ total_companies }}</div></div></div></div>
+  <div class="col-sm-6 col-xl-2"><div class="card shadow-sm h-100"><div class="card-body"><div class="text-muted small">Active Drives</div><div class="fs-3 fw-bold">{{ active_drives }}</div></div></div></div>
+  <div class="col-sm-6 col-xl-2"><div class="card shadow-sm h-100"><div class="card-body"><div class="text-muted small">Students Placed</div><div class="fs-3 fw-bold">{{ students_placed }}</div></div></div></div>
+  <div class="col-sm-6 col-xl-2"><div class="card shadow-sm h-100"><div class="card-body"><div class="text-muted small">Placement Rate</div><div class="fs-3 fw-bold">{{ placement_percent }}%</div></div></div></div>
+  <div class="col-sm-6 col-xl-2"><div class="card shadow-sm h-100"><div class="card-body"><div class="text-muted small">Highest Package</div><div class="fs-3 fw-bold">{{ highest_package }} LPA</div></div></div></div>
+</div>
+<div class="row mb-4"><div class="col-md-4"><div class="card shadow-sm"><div class="card-body"><div class="text-muted small">Average Package of Selected Students</div><div class="fs-3 fw-bold">{{ average_package }} LPA</div></div></div></div></div>
+
+<div class="row g-3 mb-4">
+  <div class="col-lg-6"><div class="card shadow-sm h-100"><div class="card-body"><h2 class="h5">Branch-wise Placement</h2><canvas id="branchChart"></canvas></div></div></div>
+  <div class="col-lg-6"><div class="card shadow-sm h-100"><div class="card-body"><h2 class="h5">Drive Applicant Turnout</h2><canvas id="turnoutChart"></canvas></div></div></div>
+</div>
+
+<div class="card shadow-sm">
+  <div class="card-header fw-bold">Recent Application Activity</div>
+  <div class="list-group list-group-flush">
+    {% for application in recent_activity %}
+      <div class="list-group-item d-flex justify-content-between align-items-center">
+        <div><strong>{{ application.student.user.name }}</strong> — {{ application.company.name }} {{ badges.application_status(application.status) }}</div>
+        <small class="text-muted">{{ application.updated_on.strftime('%d %b %Y, %H:%M') }}</small>
+      </div>
+    {% else %}
+      <div class="list-group-item text-muted">No application activity yet.</div>
+    {% endfor %}
+  </div>
+</div>
+
+<script>
+const branchChart = new Chart(document.getElementById('branchChart'), {
+  type: 'bar',
+  data: {
+    labels: {{ branch_labels | tojson }},
+    datasets: [{label: 'Placement %', data: {{ branch_percentages | tojson }}, backgroundColor: '#0d6efd'}]
+  },
+  options: {responsive: true, scales: {y: {beginAtZero: true, suggestedMax: 100, ticks: {callback: value => value + '%'}}}}
+});
+const turnoutChart = new Chart(document.getElementById('turnoutChart'), {
+  type: 'bar',
+  data: {
+    labels: {{ turnout_labels | tojson }},
+    datasets: [{label: 'Applicants', data: {{ turnout_counts | tojson }}, backgroundColor: '#198754'}]
+  },
+  options: {responsive: true, scales: {y: {beginAtZero: true, precision: 0}}}
+});
+</script>
+{% endblock %}

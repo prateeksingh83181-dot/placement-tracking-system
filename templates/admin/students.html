@@ -1,0 +1,29 @@
+{% extends "admin/base_admin.html" %}
+{% import "admin/_badges.html" as badges %}
+{% set active_page = "students" %}
+{% block title %}Students{% endblock %}
+{% block admin_content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+  <h1 class="h3 mb-0">Students</h1>
+  <a class="btn btn-success" href="{{ url_for('admin.export_students_csv', branch=filters.branch, min_cgpa=filters.min_cgpa, placed=filters.placed, search=filters.search) }}">Export Students CSV</a>
+</div>
+<form method="get" class="card card-body shadow-sm mb-3">
+  <div class="row g-2">
+    <div class="col-md-2"><label class="form-label" for="branch">Branch</label><select class="form-select" id="branch" name="branch"><option value="">All branches</option>{% for branch in branches %}<option value="{{ branch }}" {% if filters.branch == branch %}selected{% endif %}>{{ branch }}</option>{% endfor %}</select></div>
+    <div class="col-md-2"><label class="form-label" for="min_cgpa">Min CGPA</label><input class="form-control" id="min_cgpa" name="min_cgpa" type="number" min="0" max="10" step="0.01" value="{{ filters.min_cgpa }}"></div>
+    <div class="col-md-2"><label class="form-label" for="placed">Placement</label><select class="form-select" id="placed" name="placed"><option value="">All</option><option value="placed" {% if filters.placed == 'placed' %}selected{% endif %}>Placed</option><option value="unplaced" {% if filters.placed == 'unplaced' %}selected{% endif %}>Unplaced</option></select></div>
+    <div class="col-md-4"><label class="form-label" for="search">Search</label><input class="form-control" id="search" name="search" placeholder="Name or roll number" value="{{ filters.search }}"></div>
+    <div class="col-md-2 d-flex align-items-end"><button class="btn btn-primary w-100" type="submit">Filter</button></div>
+  </div>
+</form>
+<div class="card shadow-sm"><div class="table-responsive"><table class="table table-striped align-middle mb-0"><thead><tr><th>Name</th><th>Roll No</th><th>Branch</th><th>CGPA</th><th>Backlogs</th><th>Applications</th><th>Placement</th><th>Resume</th><th></th></tr></thead><tbody>
+{% for student in students %}
+<tr>
+  <td>{{ student.user.name }}</td><td>{{ student.roll_no }}</td><td>{{ student.branch }}</td><td>{{ student.cgpa }}</td><td>{{ student.active_backlogs }}</td><td>{{ student.applications|length }}</td>
+  <td>{% if student.applications|selectattr('status','equalto','Selected')|list %}<span class="badge text-bg-success">Placed</span>{% else %}<span class="badge text-bg-secondary">Not placed</span>{% endif %}</td>
+  <td>{% if student.resume_filename %}<a href="{{ url_for('admin.download_student_resume', student_id=student.id, filename=student.resume_filename) }}">Download</a>{% else %}<span class="text-muted">Not uploaded</span>{% endif %}</td>
+  <td><a class="btn btn-sm btn-outline-primary" href="{{ url_for('admin.student_detail', student_id=student.id) }}">View</a></td>
+</tr>
+{% else %}<tr><td colspan="9" class="text-center text-muted py-4">No students match the selected filters.</td></tr>{% endfor %}
+</tbody></table></div></div>
+{% endblock %}

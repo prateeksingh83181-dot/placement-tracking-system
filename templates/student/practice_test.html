@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}{{ category }} Practice Test{% endblock %}
+{% block content %}
+<h1 class="h3 mb-4">{{ category }} Practice Test</h1>
+{% if result %}<div class="alert alert-success"><strong>Score: {{ result.score }}/{{ result.total }}</strong></div>{% endif %}
+<form method="post">
+{% if not result %}
+{% for item in questions %}
+  <div class="card shadow-sm mb-3"><div class="card-body"><p class="fw-bold">{{ loop.index }}. {{ item.question }}</p>{% for letter, text in [('A',item.option_a),('B',item.option_b),('C',item.option_c),('D',item.option_d)] %}<div class="form-check"><input class="form-check-input" type="radio" name="question_{{ item.id }}" id="q{{ item.id }}{{ letter }}" value="{{ letter }}"><label class="form-check-label" for="q{{ item.id }}{{ letter }}">{{ letter }}. {{ text }}</label></div>{% endfor %}</div></div>
+{% endfor %}
+{% endif %}
+{% if result %}
+{% for entry in result.results %}{% set item = entry.question %}{% set map = {'A':item.option_a,'B':item.option_b,'C':item.option_c,'D':item.option_d} %}<div class="card shadow-sm mb-3"><div class="card-body"><p class="fw-bold">{{ loop.index }}. {{ item.question }}</p><p class="mb-1">Your answer: {{ entry.answer or 'Not answered' }}</p><p class="mb-1 {% if entry.correct %}text-success{% else %}text-danger{% endif %}">{% if entry.correct %}Correct{% else %}Incorrect{% endif %}</p><p class="mb-0"><strong>Correct answer:</strong> {{ item.correct_option }}. {{ map[item.correct_option] }}</p></div></div>{% endfor %}
+{% else %}<button type="submit" class="btn btn-success">Submit Test</button>{% endif %}
+</form>
+{% if result %}<a class="btn btn-primary mt-2" href="{{ url_for('student.prepare') }}">Back to Preparation</a>{% endif %}
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends "admin/base_admin.html" %}
+{% set active_page = "companies" %}
+{% block title %}Eligible Students{% endblock %}
+{% block admin_content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+  <div><h1 class="h3 mb-1">Eligible Students</h1><p class="text-muted mb-0">{{ company.name }} · {{ company.role_title }}</p></div>
+  <a class="btn btn-outline-secondary" href="{{ url_for('admin.companies') }}">Back to Companies</a>
+</div>
+<div class="card shadow-sm"><div class="table-responsive"><table class="table table-striped align-middle mb-0"><thead><tr><th>Name</th><th>Roll No</th><th>Branch</th><th>CGPA</th><th>Active Backlogs</th><th>Applied?</th><th></th></tr></thead><tbody>
+{% for item in eligible_students %}{% set student = item.student %}<tr><td>{{ student.user.name }}</td><td>{{ student.roll_no }}</td><td>{{ student.branch }}</td><td>{{ student.cgpa }}</td><td>{{ student.active_backlogs }}</td><td>{% if item.applied %}<span class="badge text-bg-success">Yes</span>{% else %}<span class="badge text-bg-secondary">No</span>{% endif %}</td><td><a class="btn btn-sm btn-outline-primary" href="{{ url_for('admin.student_detail', student_id=student.id) }}">View</a></td></tr>
+{% else %}<tr><td colspan="7" class="text-center text-muted py-4">No students currently meet this drive's eligibility criteria.</td></tr>{% endfor %}
+</tbody></table></div></div>
+{% endblock %}

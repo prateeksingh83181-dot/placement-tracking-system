@@ -1,0 +1,9 @@
+{% macro company_status(status) -%}
+  {% set colour = {'Open':'success','Screening':'warning','Interview':'primary','Closed':'secondary'}.get(status, 'secondary') %}
+  <span class="badge text-bg-{{ colour }}">{{ status }}</span>
+{%- endmacro %}
+
+{% macro application_status(status) -%}
+  {% set colour = {'Applied':'secondary','Shortlisted':'info','Interview':'primary','Selected':'success','Rejected':'danger'}.get(status, 'secondary') %}
+  <span class="badge text-bg-{{ colour }}">{{ status }}</span>
+{%- endmacro %}

@@ -1,0 +1,26 @@
+{% extends "admin/base_admin.html" %}
+{% import "admin/_badges.html" as badges %}
+{% set active_page = "applications" %}
+{% block title %}Applications{% endblock %}
+{% block admin_content %}
+<h1 class="h3 mb-4">Applications</h1>
+<form method="get" class="row g-3 mb-3">
+  <div class="col-md-4"><label for="company_id" class="form-label">Company</label><select class="form-select" id="company_id" name="company_id"><option value="">All companies</option>{% for company in companies %}<option value="{{ company.id }}" {% if selected_company_id == company.id %}selected{% endif %}>{{ company.name }}</option>{% endfor %}</select></div>
+  <div class="col-md-3"><label for="status" class="form-label">Status</label><select class="form-select" id="status" name="status"><option value="">All statuses</option>{% for status in statuses %}<option value="{{ status }}" {% if selected_status == status %}selected{% endif %}>{{ status }}</option>{% endfor %}</select></div>
+  <div class="col-md-3"><label for="branch" class="form-label">Branch</label><select class="form-select" id="branch" name="branch"><option value="">All branches</option>{% for branch in branches %}<option value="{{ branch }}" {% if selected_branch == branch %}selected{% endif %}>{{ branch }}</option>{% endfor %}</select></div>
+  <div class="col-md-2 d-flex align-items-end"><button class="btn btn-primary w-100" type="submit">Filter</button></div>
+</form>
+<form method="post" id="bulk-applications" action="{{ url_for('admin.bulk_update_application_status') }}"></form>
+<div class="d-flex flex-wrap gap-2 mb-3">
+  <button class="btn btn-sm btn-info" type="submit" name="target_status" value="Shortlisted" form="bulk-applications">Mark selected as Shortlisted</button>
+  <button class="btn btn-sm btn-primary" type="submit" name="target_status" value="Interview" form="bulk-applications">Mark selected as Interview</button>
+  <button class="btn btn-sm btn-success" type="submit" name="target_status" value="Selected" form="bulk-applications">Mark selected as Selected</button>
+  <button class="btn btn-sm btn-danger" type="submit" name="target_status" value="Rejected" form="bulk-applications">Mark selected as Rejected</button>
+</div>
+<div class="card shadow-sm"><div class="table-responsive"><table class="table table-striped align-middle mb-0"><thead><tr><th><input type="checkbox" id="select-all" class="form-check-input" aria-label="Select all"></th><th>Student</th><th>Roll No</th><th>Branch</th><th>CGPA</th><th>Company</th><th>Role</th><th>Current Status</th><th>Applied On</th><th>Last Updated</th><th>Update</th></tr></thead><tbody>
+  {% for application in applications %}
+  <tr><td><input type="checkbox" class="form-check-input application-checkbox" name="application_ids" value="{{ application.id }}" form="bulk-applications" aria-label="Select application"></td><td>{{ application.student.user.name }}</td><td>{{ application.student.roll_no }}</td><td>{{ application.student.branch }}</td><td>{{ application.student.cgpa }}</td><td>{{ application.company.name }}</td><td>{{ application.company.role_title }}</td><td>{{ badges.application_status(application.status) }}</td><td>{{ application.applied_on.strftime('%d %b %Y, %H:%M') }}</td><td>{{ application.updated_on.strftime('%d %b %Y, %H:%M') }}</td><td>{% set allowed = allowed_transitions.get(application.status, ()) %}{% if allowed %}<div class="d-flex gap-2"><select class="form-select form-select-sm" name="status" aria-label="New status" form="inline-{{ application.id }}" required>{% for status in allowed %}<option value="{{ status }}">{{ status }}</option>{% endfor %}</select><form method="post" id="inline-{{ application.id }}" action="{{ url_for('admin.update_application_status', application_id=application.id) }}"><button class="btn btn-sm btn-primary" type="submit">Update</button></form></div>{% else %}<span class="text-muted small">Final status</span>{% endif %}</td></tr>
+  {% else %}<tr><td colspan="11" class="text-center text-muted py-4">No applications found.</td></tr>{% endfor %}
+  </tbody></table></div></div>
+<script>document.getElementById('select-all')?.addEventListener('change', function(){document.querySelectorAll('.application-checkbox').forEach(function(box){box.checked=this.checked;}.bind(this));});</script>
+{% endblock %}

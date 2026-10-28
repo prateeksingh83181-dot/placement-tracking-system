@@ -1,0 +1,40 @@
+{% extends "admin/base_admin.html" %}
+{% set active_page = "reports" %}
+{% block title %}Placement Reports{% endblock %}
+{% block admin_content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+  <div><h1 class="h3 mb-1">Placement Reports</h1><p class="text-muted mb-0">NAAC/NBA placement analytics</p></div>
+  <a class="btn btn-success" href="{{ url_for('admin.export_placement_report') }}">Export Placement Report CSV</a>
+</div>
+
+<div class="row g-3 mb-4">
+  {% for label, value, suffix in [('Average Package', report.package_stats.average, ' LPA'), ('Highest Package', report.package_stats.highest, ' LPA'), ('Lowest Package', report.package_stats.lowest, ' LPA'), ('Median Package', report.package_stats.median, ' LPA'), ('Total Offers', report.package_stats.total_offers, '')] %}
+  <div class="col-sm-6 col-lg"><div class="card shadow-sm h-100"><div class="card-body"><div class="text-muted small">{{ label }}</div><div class="fs-4 fw-bold">{{ value }}{{ suffix }}</div></div></div></div>
+  {% endfor %}
+</div>
+
+<div class="row g-3 mb-4">
+  <div class="col-lg-6"><div class="card shadow-sm h-100"><div class="card-body"><h2 class="h5">Branch-wise Placement</h2><div style="height:280px"><canvas id="branchPlacementChart"></canvas></div></div></div></div>
+  <div class="col-lg-6"><div class="card shadow-sm h-100"><div class="card-body"><h2 class="h5">Drive Applicant Turnout</h2><div style="height:280px"><canvas id="driveTurnoutChart"></canvas></div></div></div></div>
+  <div class="col-lg-6"><div class="card shadow-sm h-100"><div class="card-body"><h2 class="h5">Application Status Distribution</h2><div style="height:280px"><canvas id="applicationStatusChart"></canvas></div></div></div></div>
+</div>
+
+<div class="card shadow-sm"><div class="card-header fw-bold">Branch-wise Summary</div><div class="table-responsive"><table class="table table-striped align-middle mb-0"><thead><tr><th>Branch</th><th>Total Students</th><th>Eligible for ≥1 Drive</th><th>Applied</th><th>Placed</th><th>Placement %</th><th>Average Package</th></tr></thead><tbody>
+{% for row in report.branch_summary %}<tr><td>{{ row.branch }}</td><td>{{ row.total_students }}</td><td>{{ row.eligible_count }}</td><td>{{ row.applied_count }}</td><td>{{ row.placed_count }}</td><td>{{ row.placement_percent }}%</td><td>{{ row.average_package }} LPA</td></tr>{% endfor %}
+</tbody></table></div></div>
+
+<script>
+window.reportChartData = {{ {
+  'branchLabels': report.branch_labels,
+  'branchPercentages': report.branch_placement_percentages,
+  'turnoutLabels': report.turnout_labels,
+  'turnoutCounts': report.turnout_counts,
+  'statusLabels': report.status_labels,
+  'statusCounts': report.status_counts
+} | tojson }};
+</script>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/charts.js') }}"></script>
+{% endblock %}

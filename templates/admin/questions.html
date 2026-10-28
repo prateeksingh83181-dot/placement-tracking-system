@@ -1,0 +1,10 @@
+{% extends "admin/base_admin.html" %}
+{% set active_page = "questions" %}
+{% block title %}Manage Questions{% endblock %}
+{% block admin_content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3"><h1 class="h3 mb-0">Practice Questions</h1><div class="d-flex gap-2"><a class="btn btn-outline-primary" href="{{ url_for('admin.import_questions') }}">Import CSV</a><a class="btn btn-primary" href="{{ url_for('admin.new_question') }}">Add Question</a></div></div>
+<form method="get" class="card card-body shadow-sm mb-3"><div class="row g-2 align-items-end"><div class="col-md-4"><label class="form-label" for="category">Category</label><select class="form-select" id="category" name="category"><option value="">All categories</option>{% for category in categories %}<option value="{{ category }}" {% if selected_category == category %}selected{% endif %}>{{ category }}</option>{% endfor %}</select></div><div class="col-md-2"><button class="btn btn-primary" type="submit">Filter</button></div></div></form>
+<div class="table-responsive card shadow-sm"><table class="table table-striped align-middle mb-0"><thead><tr><th>Category</th><th>Question</th><th>Option A</th><th>Option B</th><th>Option C</th><th>Option D</th><th>Correct</th><th>Actions</th></tr></thead><tbody>
+{% for question in questions %}<tr><td>{{ question.category }}</td><td>{{ question.question|truncate(80, True) }}</td><td>{{ question.option_a }}</td><td>{{ question.option_b }}</td><td>{{ question.option_c }}</td><td>{{ question.option_d }}</td><td><span class="badge text-bg-success">{{ question.correct_option }}</span></td><td><div class="d-flex gap-2"><a class="btn btn-sm btn-outline-primary" href="{{ url_for('admin.edit_question', question_id=question.id) }}">Edit</a><form method="post" action="{{ url_for('admin.delete_question', question_id=question.id) }}" onsubmit="return confirm('Delete this question?');"><button class="btn btn-sm btn-outline-danger">Delete</button></form></div></td></tr>
+{% else %}<tr><td colspan="8" class="text-center text-muted py-4">No questions found.</td></tr>{% endfor %}</tbody></table></div>
+{% endblock %}

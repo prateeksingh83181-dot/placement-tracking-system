@@ -1,0 +1,17 @@
+{% extends "admin/base_admin.html" %}
+{% set active_page = 'admins' %}
+{% block title %}Administrators{% endblock %}
+{% block admin_content %}
+<h2 class="mb-3">Administrators</h2>
+<div class="row g-3">
+  <div class="col-lg-8"><div class="card shadow-sm"><div class="table-responsive"><table class="table table-striped mb-0"><thead><tr><th>Name</th><th>Email</th><th>Action</th></tr></thead><tbody>
+  {% for user in admins %}<tr><td>{{ user.name }}</td><td>{{ user.email }}</td><td>{% if user.id != current_user.id %}<form method="post" action="{{ url_for('admin.delete_admin', admin_id=user.id) }}" data-confirm="Remove administrator {{ user.name|e }}?"><button class="btn btn-sm btn-outline-danger" type="submit">Remove</button></form>{% else %}<span class="badge text-bg-secondary">You</span>{% endif %}</td></tr>{% else %}<tr><td colspan="3"><div class="alert alert-info mb-0">No administrators found.</div></td></tr>{% endfor %}
+  </tbody></table></div></div></div>
+  <div class="col-lg-4"><div class="card shadow-sm"><div class="card-header fw-bold">Add Administrator</div><div class="card-body"><form method="post" novalidate>
+    <div class="mb-3"><label class="form-label" for="name">Name</label><input class="form-control" id="name" name="name" minlength="2" maxlength="120" required></div>
+    <div class="mb-3"><label class="form-label" for="email">Email</label><input class="form-control" id="email" name="email" type="email" maxlength="255" required></div>
+    <div class="mb-3"><label class="form-label" for="temporary_password">Temporary password</label><input class="form-control" id="temporary_password" name="temporary_password" type="password" minlength="8" required></div>
+    <button class="btn btn-primary" type="submit">Add Admin</button>
+  </form></div></div></div>
+</div>
+{% endblock %}

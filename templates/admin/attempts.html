@@ -1,0 +1,8 @@
+{% extends "admin/base_admin.html" %}
+{% set active_page = "attempts" %}
+{% block title %}Practice Attempts{% endblock %}
+{% block admin_content %}
+<div class="d-flex justify-content-between align-items-center mb-3"><h1 class="h3 mb-0">Practice Attempts</h1></div>
+<div class="row g-3 mb-3">{% for average in averages %}<div class="col-sm-6 col-lg-3"><div class="card shadow-sm h-100"><div class="card-body"><div class="text-muted small">{{ average.category }} Average</div><div class="fs-3 fw-bold">{{ average.average_score }}</div><div class="small text-muted">{{ average.attempt_count }} attempt(s)</div></div></div></div>{% else %}<div class="col-12"><div class="alert alert-info">No category averages yet.</div></div>{% endfor %}</div>
+<div class="card shadow-sm"><div class="table-responsive"><table class="table table-striped align-middle mb-0"><thead><tr><th>Student</th><th>Roll No</th><th>Category</th><th>Score</th><th>Date</th></tr></thead><tbody>{% for attempt in attempts %}<tr><td>{{ attempt.student.user.name }}</td><td>{{ attempt.student.roll_no }}</td><td>{{ attempt.category or 'General' }}</td><td>{{ attempt.score }} / {{ attempt.total }}</td><td>{{ attempt.taken_on.strftime('%d %b %Y, %H:%M') }}</td></tr>{% else %}<tr><td colspan="5" class="text-center text-muted py-4">No practice attempts found.</td></tr>{% endfor %}</tbody></table></div></div>
+{% endblock %}

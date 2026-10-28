@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Student Dashboard{% endblock %}
+{% block content %}
+<h1 class="h3 mb-4">Student Dashboard</h1>
+<p>Welcome, {{ current_user.name }}!</p>
+
+<div class="row g-3 mb-4">
+  <div class="col-sm-6 col-lg-3"><div class="card shadow-sm h-100"><div class="card-body"><div class="text-muted">CGPA</div><div class="fs-3 fw-bold">{{ student.cgpa }}</div></div></div></div>
+  <div class="col-sm-6 col-lg-3"><div class="card shadow-sm h-100"><div class="card-body"><div class="text-muted">Active Backlogs</div><div class="fs-3 fw-bold">{{ student.active_backlogs }}</div></div></div></div>
+  <div class="col-sm-6 col-lg-3"><div class="card shadow-sm h-100"><div class="card-body"><div class="text-muted">Eligible Drives</div><div class="fs-3 fw-bold">{{ eligible_count }}</div></div></div></div>
+  <div class="col-sm-6 col-lg-3"><div class="card shadow-sm h-100"><div class="card-body"><div class="text-muted">Applications</div><div class="fs-3 fw-bold">{{ application_count }}</div></div></div></div>
+</div>
+
+<h2 class="h4 mb-3">Open Drives</h2>
+<div class="row g-3">
+  {% for drive in drive_cards %}
+    {% set company = drive.company %}
+    <div class="col-md-6 col-xl-4">
+      <div class="card shadow-sm h-100">
+        <div class="card-body d-flex flex-column">
+          <div class="d-flex justify-content-between align-items-start mb-2">
+            <h3 class="h5 mb-0">{{ company.name }}</h3>
+            {% if drive.applied %}
+              <span class="badge text-bg-primary">Applied</span>
+            {% elif drive.is_eligible %}
+              <span class="badge text-bg-success">Eligible</span>
+            {% else %}
+              <span class="badge text-bg-danger">Not eligible: {{ drive.reason }}</span>
+            {% endif %}
+          </div>
+          <p class="fw-semibold">{{ company.role_title }}</p>
+          <p class="mb-1"><strong>Package:</strong> {{ company.package_lpa }} LPA</p>
+          <p class="mb-1"><strong>Criteria:</strong> CGPA ≥ {{ company.min_cgpa }}, max {{ company.max_backlogs }} backlog(s)</p>
+          <p class="mb-2"><strong>Allowed branches:</strong> {{ company.allowed_branches }}</p>
+          <p class="text-muted"><strong>Drive date:</strong> {{ company.drive_date.strftime('%d %b %Y') }}</p>
+          {% if drive.is_eligible and not drive.applied %}
+            <form method="post" action="{{ url_for('student.apply_to_company', company_id=company.id) }}" class="mt-auto">
+              <button type="submit" class="btn btn-success">Apply</button>
+            </form>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  {% else %}
+    <div class="col-12"><div class="alert alert-info">No open drives are currently available.</div></div>
+  {% endfor %}
+</div>
+{% endblock %}
