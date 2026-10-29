@@ -1,5 +1,5 @@
 from flask import Blueprint, flash, redirect, render_template, request, url_for
-from flask_login import login_user, logout_user, login_required
+from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from models import Student, User, db
@@ -98,6 +98,12 @@ def register():
 
 @auth_bp.route("/login", methods=["GET", "POST"])
 def login():
+    if current_user.is_authenticated:
+        if current_user.role == "admin":
+            return redirect(url_for("admin.dashboard"))
+        if current_user.role == "student":
+            return redirect(url_for("student.dashboard"))
+
     if request.method == "POST":
         email = request.form.get("email", "").strip().lower()
         password = request.form.get("password", "")

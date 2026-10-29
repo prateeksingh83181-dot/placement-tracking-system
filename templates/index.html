@@ -11,8 +11,7 @@
     {% elif current_user.is_authenticated and current_user.role == 'admin' %}
       <a class="btn btn-primary btn-lg" href="{{ url_for('admin.dashboard') }}">TPO dashboard</a>
     {% else %}
-      <a class="btn btn-primary btn-lg" href="{{ url_for('auth.login') }}">Student login</a>
-      <a class="btn btn-outline-primary btn-lg" href="{{ url_for('auth.login') }}">TPO login</a>
+      <a class="btn btn-primary btn-lg" href="{{ url_for('auth.login') }}">Login as Student or Admin</a>
     {% endif %}
   </div>
 </div>
