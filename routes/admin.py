@@ -306,8 +306,8 @@ def student_detail(student_id):
             valid = False
         try:
             backlogs = int(backlogs_text)
-            if backlogs < 0:
-                flash("Active backlogs cannot be negative.", "danger")
+            if backlogs < 0 or backlogs > 40:
+                flash("Active backlogs must be between 0 and 40.", "danger")
                 valid = False
         except (TypeError, ValueError):
             flash("Active backlogs must be a whole number.", "danger")

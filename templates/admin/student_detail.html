@@ -12,7 +12,26 @@
     <div class="card shadow-sm mb-3"><div class="card-header fw-bold">Profile</div><div class="card-body">
       <dl class="row mb-0"><dt class="col-5">Name</dt><dd class="col-7">{{ student.user.name }}</dd><dt class="col-5">Email</dt><dd class="col-7 text-break">{{ student.user.email }}</dd><dt class="col-5">Roll No</dt><dd class="col-7">{{ student.roll_no }}</dd><dt class="col-5">Branch</dt><dd class="col-7">{{ student.branch }}</dd><dt class="col-5">CGPA</dt><dd class="col-7">{{ student.cgpa }}</dd><dt class="col-5">Backlogs</dt><dd class="col-7">{{ student.active_backlogs }}</dd><dt class="col-5">Resume</dt><dd class="col-7">{% if student.resume_filename %}<a href="{{ url_for('admin.download_student_resume', student_id=student.id, filename=student.resume_filename) }}">Download PDF</a>{% else %}<span class="text-muted">Not uploaded</span>{% endif %}</dd></dl>
     </div></div>
-    <div class="card shadow-sm"><div class="card-header fw-bold">Edit Academics</div><div class="card-body"><form method="post"><div class="mb-3"><label class="form-label" for="cgpa">CGPA</label><input class="form-control" id="cgpa" name="cgpa" type="number" min="0" max="10" step="0.01" value="{{ student.cgpa }}" required></div><div class="mb-3"><label class="form-label" for="active_backlogs">Active Backlogs</label><input class="form-control" id="active_backlogs" name="active_backlogs" type="number" min="0" step="1" value="{{ student.active_backlogs }}" required></div><button class="btn btn-primary" type="submit">Save Changes</button></form><hr><form method="post" action="{{ url_for('admin.delete_student', student_id=student.id) }}" onsubmit="return confirm('Delete {{ student.user.name|e }} and all applications, attempts, and account data?');"><button class="btn btn-outline-danger" type="submit">Delete Student</button></form></div></div>
+    <div class="card shadow-sm">
+      <div class="card-header fw-bold">Edit Academics</div>
+      <div class="card-body">
+        <form method="post">
+          <div class="mb-3">
+            <label class="form-label" for="cgpa">CGPA</label>
+            <input class="form-control" id="cgpa" name="cgpa" type="number" min="0" max="10" step="0.01" value="{{ student.cgpa }}" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label" for="active_backlogs">Active Backlogs</label>
+            <input class="form-control" id="active_backlogs" name="active_backlogs" type="number" min="0" max="40" step="1" value="{{ student.active_backlogs }}" required>
+          </div>
+          <button class="btn btn-primary" type="submit">Save Changes</button>
+        </form>
+        <hr>
+        <form method="post" action="{{ url_for('admin.delete_student', student_id=student.id) }}" onsubmit="return confirm('Delete {{ student.user.name|e }} and all student data?');">
+          <button class="btn btn-outline-danger" type="submit">Delete Student</button>
+        </form>
+      </div>
+    </div>
   </div>
   <div class="col-lg-8">
     <div class="card shadow-sm mb-3"><div class="card-header fw-bold">Applications</div><div class="card-body">

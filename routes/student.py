@@ -1,4 +1,5 @@
 import os
+import re
 import random
 
 from flask import Blueprint, current_app, flash, redirect, render_template, request, send_from_directory, session, url_for
@@ -101,7 +102,7 @@ def profile():
         if not email:
             flash("Email is required.", "danger")
             error = True
-        elif "@" not in email or "." not in email or len(email) > 255:
+        elif len(email) > 255 or not re.fullmatch(r"[^@\s]+@[^@\s]+\.[^@\s]+", email):
             flash("Please enter a valid email address.", "danger")
             error = True
 
@@ -117,8 +118,8 @@ def profile():
 
         try:
             backlogs = int(backlogs_text)
-            if backlogs < 0:
-                flash("Active backlogs cannot be negative.", "danger")
+            if backlogs < 0 or backlogs > 40:
+                flash("Active backlogs must be between 0 and 40.", "danger")
                 error = True
         except (TypeError, ValueError):
             flash("Active backlogs must be a whole number.", "danger")

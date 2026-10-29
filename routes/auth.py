@@ -1,6 +1,7 @@
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.security import check_password_hash, generate_password_hash
+import re
 
 from models import Student, User, db
 
@@ -26,6 +27,18 @@ def register():
             flash("All registration fields are required.", "danger")
             error = True
 
+        if len(name) < 2 or len(name) > 120:
+            flash("Name must be between 2 and 120 characters.", "danger")
+            error = True
+
+        if len(email) > 255:
+            flash("Email must not exceed 255 characters.", "danger")
+            error = True
+
+        if not re.fullmatch(r"\d{1,13}", roll_no):
+            flash("Roll number must contain only digits and not exceed 13 digits.", "danger")
+            error = True
+
         if User.query.filter_by(email=email).first():
             flash("An account with this email already exists.", "danger")
             error = True
@@ -46,8 +59,8 @@ def register():
 
         try:
             backlogs = int(backlogs_text)
-            if backlogs < 0:
-                flash("Active backlogs cannot be negative.", "danger")
+            if backlogs < 0 or backlogs > 40:
+                flash("Active backlogs must be between 0 and 40.", "danger")
                 error = True
         except (TypeError, ValueError):
             flash("Active backlogs must be a whole number.", "danger")
@@ -61,16 +74,15 @@ def register():
         if password != confirm_password:
             flash("Passwords do not match.", "danger")
             error = True
-        elif len(password) < 6:
-            flash("Password must be at least 6 characters long.", "danger")
+        elif len(password) < 6 or len(password) > 128:
+            flash("Password must be between 6 and 128 characters.", "danger")
+            error = True
+        elif password.strip() == "":
+            flash("Password cannot be blank or contain only spaces.", "danger")
             error = True
 
-        if "@" not in email or "." not in email:
+        if not re.fullmatch(r"[^@\s]+@[^@\s]+\.[^@\s]+", email):
             flash("Please enter a valid email address.", "danger")
-            error = True
-
-        if len(name) > 120:
-            flash("Name is too long.", "danger")
             error = True
 
         if not error:
@@ -109,6 +121,12 @@ def login():
         password = request.form.get("password", "")
         if not email or not password:
             flash("Email and password are required.", "danger")
+            return render_template("login.html")
+        if len(email) > 255:
+            flash("Email is too long.", "danger")
+            return render_template("login.html")
+        if len(password) > 128 or password.strip() == "":
+            flash("Invalid email or password.", "danger")
             return render_template("login.html")
         user = User.query.filter_by(email=email).first()
 

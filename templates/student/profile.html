@@ -42,7 +42,7 @@
             </div>
             <div class="col-md-6">
               <label for="active_backlogs" class="form-label">Active Backlogs</label>
-              <input type="number" min="0" class="form-control" id="active_backlogs" name="active_backlogs" value="{{ request.form.get('active_backlogs', student.active_backlogs) }}" required>
+              <input type="number" min="0" max="40" step="1" class="form-control" id="active_backlogs" name="active_backlogs" value="{{ request.form.get('active_backlogs', student.active_backlogs) }}" required>
             </div>
           </div>
           <div class="mb-3">
